@@ -24,8 +24,8 @@
 ### Namespace to deploy pulsar
 # The namespace to use to deploy the pulsar components, if left empty
 # will default to .Release.Namespace (aka helm --namespace).
-namespace: ""
-namespaceCreate: false
+namespace: "pulsar"
+namespaceCreate: true
 
 ## clusterDomain as defined for your k8s cluster
 clusterDomain: cluster.local
@@ -35,10 +35,10 @@ clusterDomain: cluster.local
 ###
 
 ## Set to true on install
-initialize: false
+initialize: true
 
 ## Set cluster name
-# clusterName:
+clusterName: pulsar-cluster
 
 ## add custom labels to components of cluster
 # labels:
@@ -372,7 +372,7 @@ zookeeper:
       local_storage: true
       ## If you already have an existent storage class and want to reuse it, you can specify its name with the option below
       ##
-      # storageClassName: existent-storage-class
+      storageClassName: ebs-sc
       #
       ## Instead if you want to create a new storage class define it below
       ## If left undefined no storage class will be defined along with PVC
@@ -520,7 +520,7 @@ bookkeeper:
       local_storage: true
       ## If you already have an existent storage class and want to reuse it, you can specify its name with the option below
       ##
-      # storageClassName: existent-storage-class
+      storageClassName: ebs-sc
       #
       ## Instead if you want to create a new storage class define it below
       ## If left undefined no storage class will be defined along with PVC
@@ -538,17 +538,17 @@ bookkeeper:
       multiVolumes:
         - name: journal0
           size: 10Gi
-          # storageClassName: existent-storage-class
+          storageClassName: ebs-sc
           mountPath: /pulsar/data/bookkeeper/journal0
         - name: journal1
           size: 10Gi
-          # storageClassName: existent-storage-class
+          storageClassName: ebs-sc
           mountPath: /pulsar/data/bookkeeper/journal1
     ledgers:
       name: ledgers
       size: 50Gi
       local_storage: true
-      # storageClassName:
+      storageClassName: ebs-sc
       # storageClass:
         # ...
       # selector:
@@ -557,11 +557,11 @@ bookkeeper:
       multiVolumes:
         - name: ledgers0
           size: 10Gi
-          # storageClassName: existent-storage-class
+          storageClassName: ebs-sc
           mountPath: /pulsar/data/bookkeeper/ledgers0
         - name: ledgers1
           size: 10Gi
-          # storageClassName: existent-storage-class
+          storageClassName: ebs-sc
           mountPath: /pulsar/data/bookkeeper/ledgers1
 
     ## use a single common volume for both journal and ledgers
