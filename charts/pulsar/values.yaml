@@ -101,7 +101,7 @@ rbac:
 ## If you need to disable AntiAffinity for a component, you can set
 ## the `affinity.anti_affinity` settings to `false` for that component.
 affinity:
-  anti_affinity: true
+  anti_affinity: false
   # Set the anti affinity type. Valid values:
   # requiredDuringSchedulingIgnoredDuringExecution - rules must be met for pod to be scheduled (hard) requires at least one node per replica
   # preferredDuringSchedulingIgnoredDuringExecution - scheduler will try to enforce but not guranentee
@@ -116,7 +116,7 @@ components:
   # bookkeeper
   bookkeeper: true
   # bookkeeper - autorecovery
-  autorecovery: true
+  autorecovery: false
   # broker
   broker: true
   # functions
@@ -323,7 +323,7 @@ zookeeper:
       periodSeconds: 30
       timeoutSeconds: 30
   affinity:
-    anti_affinity: true
+    anti_affinity: false
     anti_affinity_topology_key: kubernetes.io/hostname
     # Set the anti affinity type. Valid values:
     # requiredDuringSchedulingIgnoredDuringExecution - rules must be met for pod to be scheduled (hard) requires at least one node per replica
@@ -359,7 +359,7 @@ zookeeper:
     persistence: true
     data:
       name: data
-      size: 20Gi
+      size: 10Gi
       local_storage: true
       ## If you already have an existent storage class and want to reuse it, you can specify its name with the option below
       ##
@@ -380,7 +380,7 @@ zookeeper:
     ## If you set useSeparateDiskForTxlog to true, this section configures the extra volume for the zookeeper transaction log.
     datalog:
       name: datalog
-      size: 20Gi
+      size: 10Gi
       local_storage: true
       ## If you already have an existent storage class and want to reuse it, you can specify its name with the option below
       ##
@@ -453,7 +453,7 @@ bookkeeper:
       # requests:
         # memory: 4Gi
         # cpu: 2
-  replicaCount: 4
+  replicaCount: 2
   updateStrategy:
     type: RollingUpdate
   podManagementPolicy: Parallel
@@ -493,7 +493,7 @@ bookkeeper:
       periodSeconds: 30
       timeoutSeconds: 5
   affinity:
-    anti_affinity: true
+    anti_affinity: false
     anti_affinity_topology_key: kubernetes.io/hostname
     # Set the anti affinity type. Valid values:
     # requiredDuringSchedulingIgnoredDuringExecution - rules must be met for pod to be scheduled (hard) requires at least one node per replica
@@ -558,7 +558,7 @@ bookkeeper:
           mountPath: /pulsar/data/bookkeeper/journal1
     ledgers:
       name: ledgers
-      size: 50Gi
+      size: 20Gi
       local_storage: true
       # storageClassName:
       # storageClass:
@@ -580,7 +580,7 @@ bookkeeper:
     useSingleCommonVolume: false
     common:
       name: common
-      size: 60Gi
+      size: 20Gi
       local_storage: true
       # storageClassName:
       # storageClass: ## this is common too
@@ -752,11 +752,12 @@ broker:
   # use a component name that matches your grafana configuration
   # so the metrics are correctly rendered in grafana dashboard
   component: broker
-  replicaCount: 3
+  replicaCount: 1
+  autoSkipNonRecoverableData: "true"
   autoscaling:
     enabled: false
     minReplicas: 1
-    maxReplicas: 3
+    maxReplicas: 1
     metrics: ~
     behavior: ~
   # This is how prometheus discovers this component
@@ -984,11 +985,11 @@ proxy:
   # use a component name that matches your grafana configuration
   # so the metrics are correctly rendered in grafana dashboard
   component: proxy
-  replicaCount: 3
+  replicaCount: 1
   autoscaling:
     enabled: false
     minReplicas: 1
-    maxReplicas: 3
+    maxReplicas: 1
     metrics: ~
     behavior: ~
   # This is how prometheus discovers this component
