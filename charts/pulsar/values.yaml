@@ -105,7 +105,7 @@ affinity:
   # Set the anti affinity type. Valid values:
   # requiredDuringSchedulingIgnoredDuringExecution - rules must be met for pod to be scheduled (hard) requires at least one node per replica
   # preferredDuringSchedulingIgnoredDuringExecution - scheduler will try to enforce but not guranentee
-  type: requiredDuringSchedulingIgnoredDuringExecution
+  type: preferredDuringSchedulingIgnoredDuringExecution
 
 ## Components
 ##
@@ -281,7 +281,7 @@ zookeeper:
   # so the metrics are correctly rendered in grafana dashboard
   component: zookeeper
   # the number of zookeeper servers to run. it should be an odd number larger than or equal to 3.
-  replicaCount: 3
+  replicaCount: 1
   updateStrategy:
     type: RollingUpdate
   podManagementPolicy: Parallel
@@ -328,7 +328,7 @@ zookeeper:
     # Set the anti affinity type. Valid values:
     # requiredDuringSchedulingIgnoredDuringExecution - rules must be met for pod to be scheduled (hard) requires at least one node per replica
     # preferredDuringSchedulingIgnoredDuringExecution - scheduler will try to enforce but not guranentee
-    type: requiredDuringSchedulingIgnoredDuringExecution
+    type: preferredDuringSchedulingIgnoredDuringExecution
   annotations: {}
   tolerations: []
   gracePeriod: 30
@@ -453,7 +453,7 @@ bookkeeper:
       # requests:
         # memory: 4Gi
         # cpu: 2
-  replicaCount: 2
+  replicaCount: 1
   updateStrategy:
     type: RollingUpdate
   podManagementPolicy: Parallel
@@ -498,7 +498,7 @@ bookkeeper:
     # Set the anti affinity type. Valid values:
     # requiredDuringSchedulingIgnoredDuringExecution - rules must be met for pod to be scheduled (hard) requires at least one node per replica
     # preferredDuringSchedulingIgnoredDuringExecution - scheduler will try to enforce but not guranentee
-    type: requiredDuringSchedulingIgnoredDuringExecution
+    type: preferredDuringSchedulingIgnoredDuringExecution
   annotations: {}
   tolerations: []
   gracePeriod: 30
@@ -595,6 +595,13 @@ bookkeeper:
   ## templates/bookkeeper-configmap.yaml
   ##
   configData:
+    ## Enable `autoSkipNonRecoverableData` since bookkeeper is running
+    ## without persistence
+    autoSkipNonRecoverableData: "true"
+    # storage settings
+    managedLedgerDefaultEnsembleSize: "1"
+    managedLedgerDefaultWriteQuorum: "1"
+    managedLedgerDefaultAckQuorum: "1"
     # we use `bin/pulsar` for starting bookie daemons
     PULSAR_MEM: >
       -Xms128m
@@ -797,7 +804,7 @@ broker:
       periodSeconds: 10
       timeoutSeconds: 5
   affinity:
-    anti_affinity: true
+    anti_affinity: false
     anti_affinity_topology_key: kubernetes.io/hostname
     # Set the anti affinity type. Valid values:
     # requiredDuringSchedulingIgnoredDuringExecution - rules must be met for pod to be scheduled (hard) requires at least one node per replica
@@ -1024,12 +1031,12 @@ proxy:
       periodSeconds: 10
       timeoutSeconds: 5
   affinity:
-    anti_affinity: true
+    anti_affinity: false
     anti_affinity_topology_key: kubernetes.io/hostname
     # Set the anti affinity type. Valid values:
     # requiredDuringSchedulingIgnoredDuringExecution - rules must be met for pod to be scheduled (hard) requires at least one node per replica
     # preferredDuringSchedulingIgnoredDuringExecution - scheduler will try to enforce but not guranentee
-    type: requiredDuringSchedulingIgnoredDuringExecution
+    type: preferredDuringSchedulingIgnoredDuringExecution
   annotations: {}
   tolerations: []
   gracePeriod: 30
@@ -1097,7 +1104,7 @@ proxy:
       https: 8443
   service:
     annotations: {}
-    type: LoadBalancer
+    type: ClusterIP
     ## Optional. Leave it blank to get next available random IP.
     loadBalancerIP: ""
     ## Set external traffic policy to: "Local" to preserve source IP on providers supporting it.
